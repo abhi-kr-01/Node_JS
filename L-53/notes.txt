@@ -1,0 +1,6 @@
+In this lecture we will learn how to use posrtman for checking the backend before product come in production 
+It is very popular in production level 
+
+1. we will make a collection in it for which we are working or testing on it
+in that collection we Will test each routes and name  it for understandable for
+frontend dev.. 

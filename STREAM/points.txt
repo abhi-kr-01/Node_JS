@@ -1,0 +1,2 @@
+1. npm i express-status-monitor -
+-- to check the running status of server of cpu utilisation

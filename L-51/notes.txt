@@ -1,0 +1,6 @@
+??
+addding foriegn key in drizzle by using leftJoin(callback function)
+In drizzle it is very easy to write query 
+But in prisma it become more complex because when we have to take join 2 table we have to write 
+2 query for it 
+But in drizzle we can do it one query

@@ -1,0 +1,22 @@
+1. setup -pnpm init
+2. pnpm i @types/express @types/node
+3. pnpm express@
+4. pnpm i mongoose  // orm for connection bw nodejs and mongoDB
+5. make models folder for making schema file for db
+6. make connection.js file in root of directory
+7. copy paste url from atlas cluster of your project in .env
+8. pnpm i dotenv
+9. package.json -> script/dev: node --watch index.js
+10 . imp point
+i). mongoDB is no sql so it should not no schema but mongoose(lib) - schema def on application level
+e.g:
+we have to  create a new recoreds (DB); for mogoose know which type of schema exists for your DB
+
+11. make user.model.js in models folder for making schema of db
+
+NOTE: mongodb+srv://abhikr954614_db_user:gXBf8si59kwM1WlG@cluster0.t2wbmim.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+if this URl for connection it generate default test db in which user has name of colllection in test db
+BUt we add after /<DB_Name> before ? then it create db with that username 
+and it's collection as per your name
+
+12. routes folder in which we make all routes;

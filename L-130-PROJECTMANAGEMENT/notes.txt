@@ -1,0 +1,59 @@
+In this kind of this project 
+PRD -> project required document
+|->  
+
+====================> Project Management Platform <==================
+
+script -> start : node index.js -> npm run start
+          dev : node index.js  -> npm run dev
+
+==> professional fi;e structure <==
+> public
+/images
+
+> src
+/controllers -> all function or logic for working of application
+/db -> db connection
+/middleware -> 
+/models -> schema of database
+/routes -> all api routes
+/utils -> all extra function which is used many no. of times
+/validators -> 
+index.js --> root of the src
+
+
+===========> CORS <==========
+npm i cors 
+-> it is use to connect middleware/express
+app.user(cors());
+
+
+===> mongoose <==
+- connection of db with serve 
+
+
+=========> 
+we will use many times async-await for accessing data from db
+so it take time so after write it look like messy coode 
+so to handle it we make "async-handler" in utils to take use again and again without messy of code in single file
+
+===> models -> models is the plasce where we make structure of the data for store in database
+
+
+===> register user  <===========
+take some data
+validate the data
+check in db if user already exist 
+saved the new user ( access token, refresh token, generate token, send email)
+user verification
+send response back to the requesst
+
+=========> login 
+take data from uservalidate data 
+if user exist
+if password is correct
+generate tokens
+send tokens in cookies
+-> some issue in sending cookies with express then we have to use some tools
+like "cookie-parser"
+

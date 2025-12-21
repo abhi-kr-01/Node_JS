@@ -1,0 +1,84 @@
+pnpm is better version of npm which is efficient and faster than npm 
+In this lecture or pproject we will use pnpm for download any package
+
+1. pnpm i @types/express @types/node
+2. script -> start : node index
+   dev: mode --watch index 
+
+   or we can dwnld nodemon for restarting the server autmatically
+
+3. db folder -> index.js
+            -> schema.js
+
+4. drizzle.config.js // make file
+write in terminal -> pnpm add drizzle-orm pg dotenv
+                  -> pnpm add -D drizzle-kit tsx @types/pg
+
+
+5. .env  -> write in this all privat things
+
+
+6. work on db/index.js
+7. make drizzle.cofig.js write all code init
+8. work on db/schema.js in which we will make table structure 
+9. setup databas using docker
+10.  docker ps -> to check the doxker running or not
+11.  docker-compose.yml file //in which we will write all code for workinh with db and docker
+12. .env file -> in which we will make db_url
+
+
+//now we will work on router and more stuff
+13. make roter.<tablename>.js
+
+e.g:
+let's assume you signed in and after some time you want to log in 
+by givin some following data email, passwd
+now when we logged in we had hashe it to keep safe
+now we are trying to logend in when we write passwd to loged in 
+these steps done for logged in 
+i). search for email in db and retrive the salt+ hashedpasswd
+11). take plain passwd from user and again hashed it.
+iii). compare new hash with already exist db hashed passwd 
+
+14. after checkin passwd if all correct now it's time to create session/tokens
+for user for stay user loged in --> which is created on db/schema.js
+
+15. we write code for session --> 
+
+16. now we will read jwt-token authentication 
+i). pnpm i jsonwebtoken
+ii). create JWT_SECRET key in .env
+--> token -> it create token that token store data which anyone can see but do not modified
+after writing code for generating token 
+we will face problem that it never be delete so we have to resolve this issue
+by providing duration of login user when we use sign()
+we will not provide long duration cookies we on ly provide for short time
+
+
+---> authorisation <---
+next step of authentication 
+when you hace to authorised firstly u have to authenticate first then u are allowed to authorised
+
+17. make admin.routes.js file for authorisation purpose
+for authorisation 
+i). first i have to create enum in schema.js
+export const userRoleEnum = pgEnum('user_role',['USER','ADMIN']);
+NOW,
+i have to add role column in table of user 
+role: userRoleEnum().notNull().default('USER');
+
+user canot see the data of user
+
+ii). i have also put the role in token 
+
+iii). make middleware restrict role -> which which is async function (role){
+   return function (req,res,next){
+      if(req.user.role !== role){
+         return res.json({error: you arn't authorised to cces this data})
+      }
+      return next()
+   }
+} 
+
+
+

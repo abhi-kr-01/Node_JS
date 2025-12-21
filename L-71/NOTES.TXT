@@ -1,0 +1,5 @@
+========> ZOD <=========
+zod is validation library 
+1. install zod -> pnpm i zod
+2. create folder -> utils/validation
+
