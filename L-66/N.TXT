@@ -14,7 +14,6 @@ we have to  create a new recoreds (DB); for mogoose know which type of schema ex
 
 11. make user.model.js in models folder for making schema of db
 
-NOTE: mongodb+srv://abhikr954614_db_user:gXBf8si59kwM1WlG@cluster0.t2wbmim.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 if this URl for connection it generate default test db in which user has name of colllection in test db
 BUt we add after /<DB_Name> before ? then it create db with that username 
 and it's collection as per your name
