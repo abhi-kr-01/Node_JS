@@ -1,0 +1,442 @@
+http long polling :
+
+HTTP Long Polling
+Problem It Solves
+
+Normally in HTTP:
+
+Client sends request
+Server responds
+Connection closes
+
+Example:
+
+You open Instagram:
+
+GET /posts
+
+Server returns posts.
+
+Done.
+
+Connection closes.
+
+But what if you want real-time chat?
+
+Suppose WhatsApp worked using normal HTTP.
+
+You'd need to ask:
+
+“Any message?”
+“Any message?”
+“Any message?”
+
+every second.
+
+Very inefficient.
+
+What is Long Polling?
+
+Instead of replying immediately, the server waits until new data exists.
+
+Flow
+
+Step 1:
+Browser asks:
+
+GET /new-message
+
+Step 2:
+Server says:
+
+"No message yet... wait."
+
+Server keeps request open.
+
+Step 3:
+Someone sends message.
+
+Server finally replies:
+
+{
+   "message": "Hello"
+}
+
+Step 4:
+Browser immediately sends another request again.
+
+Cycle repeats.
+
+Real-Life Example
+
+Imagine you ask your friend:
+
+“Did the teacher arrive?”
+
+Instead of saying:
+
+“No.”
+
+He says:
+
+“Wait… I’ll tell you when teacher comes.”
+
+He waits.
+
+As soon as teacher arrives:
+
+“Teacher came!”
+
+Then you ask again.
+
+This is long polling.
+
+Visualization
+Client -------- Request --------> Server
+                 waiting...
+
+Client <------- Response -------- Server
+
+Client -------- Request --------> Server
+                 waiting...
+Advantages
+Simple
+
+Works with old browsers.
+
+No special protocol
+
+Still HTTP.
+
+Disadvantages
+High overhead
+
+Every time:
+
+new HTTP headers
+new request
+new response
+
+Expensive.
+
+Slow
+
+Frequent reconnects.
+
+Wasteful
+
+Many open requests.
+
+Where used?
+
+Before WebSocket existed.
+
+Old chat apps.
+
+#WebSocket
+This changed everything.
+
+Problem WebSocket Solves
+
+Long polling wastes resources.
+
+Instead:
+
+Why not keep one connection permanently open?
+
+What is WebSocket?
+
+A persistent bidirectional connection between client and server.
+
+Once connected:
+
+Both can send data anytime.
+
+No reconnecting.
+
+Real-Life Example
+
+Think of a phone call.
+
+Normal HTTP:
+
+Call → Ask question → Hang up
+Call → Ask question → Hang up
+
+WebSocket:
+
+Call once
+Talk continuously
+
+No reconnect.
+
+How WebSocket Works
+
+Initially starts with HTTP.
+
+Client says:
+
+GET /chat
+Upgrade: websocket
+Connection: Upgrade
+
+Meaning:
+
+“Let’s switch from HTTP to WebSocket.”
+
+Server agrees:
+
+101 Switching Protocols
+
+After this:
+
+HTTP ends.
+
+WebSocket begins.
+
+Visualization
+Client <====================> Server
+       Persistent Connection
+
+Two-way communication.
+
+Bidirectional Communication
+Client → Server
+socket.send("hello");
+Server → Client
+socket.send("new message");
+
+No request-response cycle needed.
+
+Why Socket.IO Uses It
+
+Socket.IO tries:
+
+WebSocket first
+If unavailable → falls back to long polling
+
+So Socket.IO is more reliable.
+
+Where WebSocket is Used
+Chat apps
+Multiplayer games
+Stock market updates
+Notifications
+Live dashboards
+Collaborative editors
+Why Fast?
+
+Connection already exists.
+
+No repeated HTTP headers.
+
+Only data sent.
+
+Example:
+
+Instead of:
+
+POST /message
+Header...
+Cookies...
+Metadata...
+
+Only:
+
+hello
+
+Tiny packet.
+
+Fast.
+
+One Important Confusion
+WebSocket ≠ Socket.IO
+
+WebSocket is protocol.
+
+Socket.IO is library.
+
+Socket.IO gives:
+
+rooms
+reconnect
+fallback
+events
+
+Example:
+
+Raw WebSocket:
+
+ws.send("hello");
+
+Socket.IO:
+
+socket.emit("message", "hello");
+
+Much easier.
+
+# webTransport 
+This is modern and advanced.
+
+Still evolving.
+
+Built for:
+
+ultra-low latency communication
+
+especially:
+
+gaming
+video streaming
+WebRTC-like systems
+Problem With WebSocket
+
+WebSocket uses:
+
+Transmission Control Protocol (TCP)
+
+TCP guarantees:
+
+no packet loss
+
+But sometimes this becomes slow.
+
+Example:
+
+Video call.
+
+Suppose packet 5 is lost.
+
+TCP says:
+
+Wait!
+Packet 5 missing.
+Re-send before continuing.
+
+This causes lag.
+
+Frozen video.
+
+Why This Is Bad for Video
+
+In video calls:
+
+You don't care about an old frame.
+
+If one frame drops:
+
+Skip it.
+
+Continue.
+
+You care about speed, not perfection.
+
+WebTransport Solution
+
+WebTransport runs over:
+
+QUIC
+
+QUIC uses:
+
+User Datagram Protocol (UDP-like behavior)
+
+Meaning:
+
+Fast.
+
+Packets can be skipped.
+
+No waiting.
+
+Real-Life Example
+TCP (WebSocket)
+
+Teacher reading attendance.
+
+If one student missing:
+
+“Wait! Where is roll 15?”
+
+Everything pauses.
+
+UDP/WebTransport
+
+Teacher:
+
+“Skip 15. Continue.”
+
+Faster.
+
+Special Feature: Multiple Streams
+
+WebSocket:
+
+Single lane road.
+
+[chat][video][file]
+
+If one stuck → everything stuck.
+
+Called:
+
+Head-of-line blocking
+
+WebTransport:
+
+Multi-lane highway.
+
+lane1 → video
+lane2 → audio
+lane3 → chat
+
+Independent.
+
+Very powerful.
+
+Types of Data
+Reliable stream
+
+Like TCP.
+
+Guaranteed delivery.
+
+Good for:
+
+chat
+file transfer
+Unreliable datagram
+
+Fast.
+
+May lose packets.
+
+Good for:
+
+gaming
+voice
+live video
+Real-Life Analogy
+
+Imagine courier service.
+
+Reliable delivery
+
+Package must arrive.
+
+Retry if lost.
+
+(Chat message)
+
+Unreliable delivery
+
+Live cricket score.
+
+If one update lost:
+
+No problem.
+
+You'll get next score.
+
+(Video/audio)
+

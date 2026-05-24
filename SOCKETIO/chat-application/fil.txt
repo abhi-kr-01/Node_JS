@@ -1,0 +1,191 @@
+for persistent connection client <-----> server 
+we have to install 
+
+backend -> socket.io
+frontend -> socket.io-client
+
+--we cannot directly attach the socket io to express 
+    const app = express()
+    io(app) ;
+    why ?? beacuse socket io works on http server not express app directly
+
+    express app -- runs on -- http server --> upgraded to - websocket connection 
+
+
+-- const io = new Server(server, {
+    cors,transport,pingtimeouts,authentication,ping interval, path , buffer size
+})
+
+const io = new Server(server, {
+    transports: [
+        "websocket",
+        "polling"
+    ]
+});
+
+pingtimeout: How long server waits before disconnecting inactive client.
+
+Suppose internet disconnects.
+
+Server waits:
+
+60 seconds
+
+then disconnects.
+
+pingInterval
+
+Example:
+
+pingInterval: 25000
+
+Meaning:
+
+Server periodically checks:
+
+"Are you alive?"
+
+Like heartbeat.
+
+Server sends:
+
+ping
+
+Client replies:
+
+pong
+
+If no reply:
+
+disconnect
+
+
+------
+The io.on() method is the primary way to listen for events on a Socket.IO server instance. It is an event listener that triggers a callback function whenever a specific event occurs across the entire server or a specific namespace
+
+// Server-side example
+io.on('connection', (socket) => {
+  console.log('A user connected with ID:', socket.id);
+
+  // You can then listen for events on that specific socket
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
+
+
+# client io() 
+
+import { socket } from "./socket";
+
+const socket = io(
+   "http://localhost:3000",
+   {
+      autoConnect: false,
+      transports: ["websocket"]
+   }
+)
+
+const socket = io(url, {
+   autoConnect: false
+})
+
+socket.connect();
+manual connection 
+login first then connect
+
+send extra data 
+const socket = io(url, {
+    query: {
+        userId: "123"
+    }
+});
+backend 
+socket.handshake.query.userId   -> used for auth
+
+
+# server io() 
+
+const io = new Server(server)
+io
+
+is the main Socket.IO server instance.
+
+io.on()
+io.emit()
+io.to()
+
+io.on("connection", (socket)=>{})
+
+means:
+
+Listen for new client connections.
+
+-- something.on(eventName, callback) --
+
+Custom Events
+
+Example:
+
+Client:
+
+socket.emit("message", "hello")
+
+Server:
+
+socket.on("message", (data) => {
+   console.log(data)
+});
+
+Custom event:
+
+"message"
+
+You invent names.
+
+Like:
+
+join-room
+typing
+video-call
+offer
+answer
+ice-candidate
+
+What Does Server socket Return?
+
+It is a:
+
+--- Socket instance for one specific client
+
+Contains:
+
+socket.id
+socket.emit()
+socket.on()
+socket.disconnect()
+socket.broadcast
+
+socket.emit() --> send message to only one client 
+io.emit()-->
+Send to everybody.
+Example:
+io.emit(
+   "message",
+   "hello all"
+)
+Broadcast to all users.
+
+socket.broadcast.emit()
+
+Send to everyone except sender.
+
+Used in chat.
+
+Example:
+
+socket.broadcast.emit(
+   "joined",
+   "Abhi joined"
+)
