@@ -1,0 +1,153 @@
+when this type of project is very large then we have to share the project in team with other then if we share complete 
+project then they has to download lot of tools which is time taking and not good pratice 
+
+so, to handle tis problem 
+
+project  ---> [Docker Image] ---> Internet 
+
+1. AnyOne who has installed docker engine who can run my project
+
+# Custom Image:
+
+1. create "Dockerfile" in project folder
+2. Dockerfile is just a configration file how it will run when anyone start this
+    
+
+DockerFile
+FROM Base_Image
+e.g: FROM ubuntu
+
+COPY source_computer target_computer  ---> target_computer -> container of the Image it can be path or many more ...
+e.g: COPY index.js server.js 
+COPY index.js /home/app/index.js  
+COPY package-lock.json /home/app/package-lock.json
+COPY package.json /home/app/package.json
+
+
+
+3. docker build -t [image_name] .   [All the command is called "layer"]
+ NOTE: docler internally cached 
+
+-----------------------------------------
+#Base Image
+FROM ubuntu
+
+RUN apt-get update
+RUN apt install -y curl
+#to install nodejs in Image
+RUN curl -sL https://deb.nodesource.com/setup_23.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt install -y nodejs
+
+
+#copying source code to docker Image
+COPY index.js /home/app/index.js
+COPY package-lock.json /home/app/package-lock.json
+COPY package.json /home/app/package.json
+
+WORKDIR /home/app
+
+RUN npm install 
+
+-------------------------
+
+this is not optimal image because of ubuntu include in making image 
+
+
+------------ for making optimized -----------
+
+FROM node:version-alpineV
+
+#copying source code to docker Image
+COPY index.js /home/app/index.js
+COPY package-lock.json /home/app/package-lock.json
+COPY package.json /home/app/package.json
+
+WORKDIR /home/app
+
+RUN npm install 
+
+CMD ['npm','start']  --> this cmd will run automatically when the docker image is start 
+
+--------------------------------------------
+
+another technique for optimised
+
+we know that docker cached internally .
+so when we change any file then from that layer going down all will be modified when we build the image.
+
+e.g:
+
+FROM node:version-alpineV
+
+#copying source code to docker Image
+COPY index.js /home/app/index.js
+COPY package-lock.json /home/app/package-lock.json
+COPY package.json /home/app/package.json
+
+WORKDIR /home/app
+
+RUN npm install 
+
+- when we change in index.js then it install npm again which is not neccesaary 
+- so order of execution of layer matter to optimised the image
+
+-----------------------------
+FROM node:version-alpineV
+
+WORKDIR /home/app
+
+COPY package-lock.json /home/app/package-lock.json  \__  COPY package*.json .
+COPY package.json /home/app/package.json            /
+
+RUN npm install 
+
+EXPOSE 8000-8009
+
+COPY index.js /home/app/index.js
+
+---------------------------
+this is the optimised image.
+
+
+
+# when container is running but server is not running so how can i handle this problem 
+
+1. we have to do port mapping to run the server from container 
+   [docker run -it -p host_machine_port_number:container_port_number my-app]
+
+
+   this command will run the constainer and also start the server using port number of container and the run the server using
+   own port of localhost
+
+   e.g : docker run -it -p 8000:8000 my-app
+   e.g: docker run it -p 3000:8000 my-app
+
+   -> 3000 -> the person who use the container of my image ay-app . he/she can run the server on his own machine using port 3000
+   -> 8000 -> the person who created this project his local machine run on 8000 port and add this in container thats means
+   container is running on 8000 - inside the application container is running on port number 8000
+
+    -> we can also map multiple port number
+    e.g: docker run -it -p 8000:8000 -p 8001:8001 my-app
+    docker run -it -P my-app  --> [-P] --> means --> automatically porting happens
+    - It could be done after EXPOSE port number in project Dockerfile 
+
+    
+docker run -it -P --rm run my-app --> It means , container will run until terminal is not killed or paused or closed 
+                                      if terminal is closed then container also killed 
+
+- If we do this terminal is blocked we will not able to use the terminal again and container will run simultaneoulsy
+- b/c many server there is only one server 
+- to hanlde this problem "docker run -itd -P --rm run my-app"  -> it detach it give currect id and give space to work on terminal
+
+-d -> run the container in background and give the container id .
+
+
+-------- Publisihing the docker file onto dockerHub -----------------
+
+Container registry : hub.docker.com , artifacts of goocle cloud  etc. 
+
+1. create a repository on docker hub or any other organisation 
+2. build the application with unique name as per repository name [docker buiuld -t voyderContainer/node-application .]
+3. first login the docker from terminal 
+4. docker push  --> it will push the image to DockerHub 

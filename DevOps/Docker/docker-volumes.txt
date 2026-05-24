@@ -1,0 +1,39 @@
+if i run contianer : when we create a file it created but if we stop the container all created file is also ogone 
+Also isolation is created 
+
+Let's suppose i am trying to access the local folder form docker container can we acces it ?
+No,
+
+-> So, lets access it using -v [mount] folder 
+I can mount this volumes onto the docker contianer
+ How it happend ?
+
+ HOST : path 
+ continer: path 
+
+ mount the given path to the container given path 
+
+ e.g: HOST: downloads/index.js
+      container: home/ubuntu/abhishek 
+
+      anything i will do in conatiner abhishek folder it will reflect to the index.js file 
+-> Even if container goes down it will not effect the HOST folder andd files 
+
+docker run -it --rm -v local_address_where_u_want_to_connect:path_container_address IMAGE_NAME
+
+-> one mount can be used by multiople containers    
+
+
+# creating cutome volumes :
+
+docker volumes [command]
+
+  create      Create a volume
+  inspect     Display detailed information on one or more volumes
+  ls          List volumes
+  prune       Remove unused local volumes
+  rm          Remove one or more volumes
+
+e.g: docker volumes create <volumes_name>
+
+

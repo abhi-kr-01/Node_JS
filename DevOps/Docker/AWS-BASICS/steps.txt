@@ -1,0 +1,17 @@
+1. create account on aws.
+2. search iam 
+3. user 
+4. create user 
+5. adminAccess - admin access - job function 
+6. downloads aws cli 
+7. create access key from credentials
+8. run cmd in terminal "aws configure" to connect the aws to cli 
+ - it give access key , secret key , region selection - ap-south-1 and output format - json
+9. cd ~/.aws -> send to the aws direc
+10.  ls -> two files configure and credentials 
+11. all credentials are stored in credentials file acce key, secret key and many more
+12. for seeing credentials "cat credentials"
+13. RUN CMD [aws iam get-user] --> to show the detail of user 
+
+
+

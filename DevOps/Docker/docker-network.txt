@@ -1,0 +1,82 @@
+docker network 
+docker network inspect network_name
+e.g: docker network inspect milyway  -> "172.19.0.0 ip address of network of continer"
+docker network create {NAME} --> custom network
+docker run -itd --network=NAME --rm --name=IMAGE_NAME IMAGE
+
+
+e.g: 3 contianer one network "milkyway"
+docker network inspect milkyway
+[
+    {
+        "Name": "milkyway",
+        "Id": "2024b3e8cb980462c156f5e300a5c541b9802d351bb90cb40e84e889ea4dcc83",
+        "Created": "2026-05-21T06:25:33.34117202Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "4594cc09e1314bca938342847ad03b40e09edeb65446db0c7917175986bf07a4": {
+                "Name": "ironman",
+                "EndpointID": "ee94747adb21fe4bd464a9642d0ad9b5ceea03aacfc796f825b49df1bc52b480",
+                "MacAddress": "ee:89:08:ba:93:2d",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "6d76b8e143558af3fd902c7137bccf32a8b93acaf17fa393b70e4c105a610142": {
+                "Name": "drStrange",
+                "EndpointID": "e36dbad042a6a649cd99f392ef533d1cd086ecb890b0a6de93146907287d663b",
+                "MacAddress": "62:c0:e5:6a:0d:3c",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "bbc846c5eadfa01df70cb85878ad34a7e8bda9262fe6897fb5476cf77d656ce0": {
+                "Name": "spiderman",
+                "EndpointID": "d390e21f688e2da6c7136fbe99147a5f4629b7c88a5ee5b70586117d86dffba1",
+                "MacAddress": "ae:c1:f5:fb:dd:27",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {}
+    }
+]
+
+
+all three contianer is running 
+
+-> all three Containers talk to each other 
+-> But , a question does it talk to other Containers on other network which is also bridge network ?
+    no, but after connectin we can talk to each other 
+
+docker network connect <conatiner1> <conatiner2>
+
+e.g: docker network connect conatiner1 conatiner2
+
+docker network disconnect <conatiner1> <conatiner2>
+
+#host --> remove network isollation between constianer and docker host , and use the host's networking directly.
+
+#overlay --> overlay network connect directly docker daemons together and enable swarm services conatiners to communicate across nodes.
