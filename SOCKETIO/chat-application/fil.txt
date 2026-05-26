@@ -189,3 +189,51 @@ socket.broadcast.emit(
    "joined",
    "Abhi joined"
 )
+
+
+NOTE: In react to handle some button with kyword we use onkeyDown={} in required.
+
+NOTE: Can socket store custom data?
+
+YES.
+
+Socket object is normal JS object.
+
+We attach:
+
+username
+
+to socket.
+
+Like:
+
+socket.id
+socket.username
+
+
+##
+Why can’t backend ask frontend for username during disconnect?
+
+Because:
+
+disconnect
+
+means the connection is already gone.
+
+Think:
+
+Phone call ended.
+
+You can’t suddenly ask:
+
+“Wait, what was your name?”
+
+No connection exists anymore.
+
+That’s why server must already store:
+
+socket.id → username
+
+before disconnect happens.
+
+Very important backend architecture concept.
