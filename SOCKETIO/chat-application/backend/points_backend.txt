@@ -249,3 +249,20 @@ Very important backend architecture concept.
   }
 
 2. To send the message in specific room : "io.to(room)"
+
+
+
+###############
+
+
+
+in socket/chatSocket.js
+
+- we create a function initilizedSocket(io) and passed argument io 
+why ???
+
+-- Passing io as an argument to your socket initialization function (initializeSocket(io)) is a software design pattern known as Dependency Injection.
+
+-- Instead of creating a new Socket.io instance inside your socket file or managing messy cross-file imports, you create it once in your main server.js and "inject" it into the modules that need it.
+
+-- 

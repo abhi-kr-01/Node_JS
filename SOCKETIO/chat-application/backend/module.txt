@@ -1,0 +1,75 @@
+// import express from 'express'
+// import cors from 'cors'
+
+// const app = express();
+
+// const allowedOrigins = [
+//     "http://localhost:5173"
+// ]
+
+// app.use(cors({
+//     origin: function (origin, callback) {
+
+//         if (!origin) {
+//             return callback(null, true);
+//         }
+
+//         if (allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error("Not allowed by CORS"));
+//         }
+//     },
+
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: [
+//         "Content-Type",
+//         "Authorization"
+//     ]
+// }));
+
+// app.get("/",(req,res) => {
+//     res.send("<h1>Hello world</h1>")
+// })
+
+// app.get("/api/message",(req,res) => {
+//     res.json({message: "Hello from server"})
+// })
+
+// app.listen(3000,() => {console.log(`server is listening at PORT : http://localhost:${3000}`)})
+
+
+------------------------------------------------------------------------------------------------------
+//listen for connection 
+// io.on("connection",(socket) => {
+//     console.log("client connected");
+//     console.log(socket.id)
+// })
+// io.on("connection", (socket) => {
+
+//     console.log("Connected:", socket.id);
+
+//     socket.on("disconnect", () => {
+//         console.log("Disconnected:", socket.id);
+//     });
+
+// });
+
+// custom event handling for client and server 
+
+// io.on("connection", (socket) => {
+
+//     console.log("Connected:", socket.id);
+
+//     //socket.on(evenetName,callback)  -- listen the event
+//     socket.on('message',(data)=> {
+//         console.log("recieved:",data);
+//         socket.emit("reply","hello user from server");
+//     })
+
+//     socket.on("disconnect", () => {
+//         console.log("Disconnected:", socket.id);
+//     });
+
+// });
