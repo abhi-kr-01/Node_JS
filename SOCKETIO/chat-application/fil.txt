@@ -237,3 +237,15 @@ socket.id → username
 before disconnect happens.
 
 Very important backend architecture concept.
+
+# room creation 
+
+1. socket.join(roomName) : it join the sockets into the roomName 
+  {
+    room: roomName,
+    members: 
+        socket1,
+        socket2
+  }
+
+2. To send the message in specific room : "io.to(room)"
