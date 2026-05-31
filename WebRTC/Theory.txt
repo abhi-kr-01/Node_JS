@@ -1,0 +1,111 @@
+## WebRTC: Web real-time communication -> it is browser technology 
+
+[a-> server -> B] -> webRTC -> [A <-> B] 
+- pear to pear direct communication [P2P] 
+
+- WebRTC (Web Real-Time Communication) is an open-source technology that allows web browsers and mobile apps to 
+communicate with each other directly in real-time. It enables audio, video, and data sharing between devices without 
+needing to download plug-ins or route everything through central servers
+
+- WebRTC shifts this by establishing a Peer-to-Peer (P2P) connection
+ 1. Direct streams:  Audio and video streams are sent directly from device to device, reducing latency and avoiding heavy server loads
+ 2. signaling:  Although it is P2P, a server is initially required to help devices introduce themselves, negotiate connection settings, and establish network paths (a process known as NAT traversal).
+ 3. Security:  WebRTC mandates encryption, making secure communication a built-in feature
+
+- Capabilities: file transfer & screen sharing, in-Browser Video and voice and data Transfer
+
+=> Why it is created ? 
+ - p1: browser can't access mic and camera.
+ - p2: Huge latency through server b/c of [userA -> server -> userB]
+ - p3: Difficult to real-communication . HTTP works on [req<->res], but calling needs continuous real-time data flow  
+
+
+=> solution:
+ - with webRTC browser directly connect with browser .
+ - server only helps initially 
+
+=> But browser don't know each other how do they connect ?
+ -
+
+#concept used in WebRTC:
+
+1. Media Captures:
+ - getting access of camera , mic ,screen 
+ - Browser API : navigator.mediaDevices.getUserMedia()
+
+2. p2p communication :
+ - Object in JS: RTCPeerConnection
+ - provide browser <-> browser connection 
+ - handles audio packets, video packets and network optimisation
+
+3. Signaling:
+ - WebRTC doesn't provide signaling 
+ - webRtc only handles media transfer not finding user
+ - we need our own signaling system (socket.io or WebSocket)
+ - signaling : [A <-> B] data exchaing throuogh server without long polling
+ - it is reuire only on setup phase 
+ -
+
+4. SDP(Session Description Protocol):
+ - browser says:
+    I support:
+    video: h264
+    audio: opus
+    resolution: 720p 
+ - this info stored in SDP (resume of browser media capabilties)
+ FLOW: [A caller OFFER -> server(socket.io) -> B receive OFFER, B create ANSWER -> server -> A receive ANSWER] : offer/Answer model
+
+5. ICE Candidates: 
+ - Users are behind routers.
+
+ -WebRTC tries many possible routes.
+    These routes are: ICE candidates 
+
+ - browser says: 
+    Try this IP
+        No?
+        Try this one
+        No?
+        Try relay server
+    this is called ICE candidates exchanges
+
+
+=> webRTC flow diagram:
+getUserMedia()
+        ↓
+RTCPeerConnection
+        ↓
+Offer
+        ↓
+Socket.IO signaling
+        ↓
+Answer
+        ↓
+ICE Candidate exchange
+        ↓
+P2P Connection
+        ↓
+Real-time video/audio
+
+Pronlem : suppose you and your friend are live on different location and both want to do video call 
+and you start video calling then how browser find your friend ip location to connect it ?
+b/c every device hidden behind : routers, NAT and firewalls 
+- bothj person has it's private IPs and private IPs are not reachable on internet 
+
+NAT(network address translation) : 
+- we can't expose private ips on internet so  - private Ips (devices)
+- laptops -> router -> internet  [ routers has public ips] it is visible on internet    
+- Browser doesn't know:  "How do I reach the other browser hidden behind router?"
+
+This is exactly what ICE solves.
+
+#ICE: interactive connection establishment
+ -- A process WebRTC uses to find the best possible route between two peers.
+ -- ICE = route finder
+ -- ICE candidates: A possible network address/path to connect. 
+    = each possible connected path is candidates but ice choose best and shortes path 
+
+Types of ICE candidates: 
+1. HOST candidates: 
+2. server reflexive candidates : srflx   ----> STUN server - this is public ip
+3. Relay candidates  --> TURN server 

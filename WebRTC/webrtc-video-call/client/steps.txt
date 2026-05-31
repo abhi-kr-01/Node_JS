@@ -1,0 +1,471 @@
+1. setup for camera start button
+2. we can see stream = {
+    id,active,onactive, onaddTrack, oninactive, onremoveTrack
+}
+when we do stream.getVideoTracks()[0];
+it will give: kind, enabled, label , readyState, muted, id
+
+-kind will give video or audio Types
+- enabled : it control media is being sent or not 
+    e.g: stream.getVideoTracks()[0].enabled = false;  -> video freezes --> b/c camera disabled
+- label: it will actual device name
+- readyState - shows wheter track is available or not
+  e.g: track.readyState: o/p live -> device alive
+  e.g: track.stop() 
+
+- track.enabled = false -> paused for while but track.stop() => detroy track completely
+
+
+# Signaling 
+complete webRTC flow 
+- when user joins 
+1. Join room (Socket.IO)
+
+2. Create RTCPeerConnection
+
+3. Caller creates OFFER
+
+4. Send offer via Socket.IO
+
+5. Receiver creates ANSWER
+
+6. Send answer back
+
+7. Exchange ICE candidates
+
+8. Peer connection established
+
+9. Remote video starts
+
+# making join-room
+User enters room id
+        ↓
+Click Join Room
+        ↓
+Socket emit
+        ↓
+Server joins socket to room
+        ↓
+Server checks users count
+
+after making join-room
+User A joins room
+        ↓
+waiting...
+
+User B joins room
+        ↓
+Server emits "user-joined"
+        ↓
+User A gets notified
+
+10. RTCPeerToPeerConnection (Heart of WebRTC)
+until now: SOCKET.IO = Signaling  -- but actual media transfer still not happening 
+b/c we have not created RTCPeerToPeerConnection
+
+--- what it is : 
+special browser object: that manages :
+audio sending
+video sending
+network connection
+ICE candidates
+codec negotiation
+packet transport
+
+--> create Peer Ref
+    const PeerConnectionRef = useRef(null);  // for peer to peer connection why ? it is mutable object, doen't need render and same reason as streamRef
+
+making function : for send browser object
+
+- create connection object:
+ const peer = new RTCPeerConnection();
+
+- When you did:
+
+const peer = new RTCPeerConnection();
+console.log(peer);
+
+you saw a huge object.
+
+You might think:
+
+“What is this monster object?”
+
+Think of it as:
+
+WebRTC connection engine
+
+At this moment:
+
+peer = empty connection shell
+
+No media.
+
+No remote user.
+
+No offer.
+
+No answer.
+
+Nothing connected yet.
+
+Just a prepared engine.
+
+What Actually Happens Internally?
+
+When browser creates:
+
+new RTCPeerConnection()
+
+browser prepares:
+
+networking system
+audio transport
+video transport
+security encryption
+ICE system
+codec negotiation
+
+Think:
+
+creating empty phone call room
+
+Nobody joined yet.
+
+Important Properties You Saw
+
+Expand object in console.
+
+You’ll notice:
+
+connectionState
+iceConnectionState
+signalingState
+localDescription
+remoteDescription
+
+Let’s understand each.
+
+1. connectionState
+
+Current peer connection status.
+
+Try:
+
+peerConnectionRef.current.connectionState
+
+Initially:
+
+"new"
+
+Meaning:
+
+connection just created
+
+No remote user yet.
+
+Later:
+
+connecting
+connected
+disconnected
+failed
+closed
+Flow
+
+Initially:
+
+new
+
+When negotiation starts:
+
+connecting
+
+Successful:
+
+connected
+
+Internet loss:
+
+disconnected
+2. signalingState
+
+This is super important.
+
+Shows:
+
+Where offer/answer negotiation is.
+
+Initially:
+
+peer.signalingState
+
+Output:
+
+"stable"
+
+Meaning:
+
+nothing happening yet
+
+Later:
+
+Caller creates offer:
+
+have-local-offer
+
+Receiver sets offer:
+
+have-remote-offer
+
+Answer exchanged:
+
+stable
+
+again.
+
+Mental Model
+
+Think:
+
+stable = calm
+
+offer happening = negotiation in progress
+
+stable again = deal completed
+3. iceConnectionState
+
+Most confusing part.
+
+Initially:
+
+"new"
+
+Meaning:
+
+no network path found
+
+Later browser searches routes.
+
+States:
+
+checking
+connected
+completed
+failed
+
+Meaning:
+
+Can two peers reach each other?
+
+This is where:
+
+STUN
+TURN
+ICE candidates
+NAT
+
+come.
+
+We’ll deeply learn this next.
+
+4. localDescription
+
+Initially:
+
+null
+
+Why?
+
+Because:
+
+No offer created.
+
+Later:
+
+createOffer()
+
+fills:
+
+localDescription
+
+Contains:
+
+SDP offer
+
+Think:
+
+"My WebRTC capabilities"
+5. remoteDescription
+
+Initially:
+
+null
+
+Because:
+
+No other user yet.
+
+Later:
+
+Remote user sends:
+
+offer / answer
+
+Stored here.
+
+Why Peer Object Looks Huge?
+
+Because browser pre-builds everything.
+
+Imagine:
+
+When Zoom starts call:
+
+Browser already prepares:
+
+network transport
+security
+video codecs
+audio codecs
+candidate gathering
+
+Even before connection.
+
+That’s why object huge.
+
+Try These in Console
+
+After peer created:
+
+1
+peerConnectionRef.current.connectionState
+
+Expected:
+
+"new"
+2
+peerConnectionRef.current.signalingState
+
+Expected:
+
+"stable"
+3
+peerConnectionRef.current.localDescription
+
+Expected:
+
+null
+4
+peerConnectionRef.current.remoteDescription
+
+Expected:
+
+null
+
+This will make the peer object much less scary.
+
+Next step is the biggest WebRTC concept:
+
+Why NAT breaks WebRTC
+What STUN actually does
+Why ICE candidates exist
+
+That’s the moment WebRTC truly clicks.
+
+###
+Now we begin : Offer -> Answered
+
+# create first offer : Caller Side
+CreatePeerConnectino()  -- it will send the tracks to after create offer
+
+
+
+# send offer via socket.io
+current flow :
+User A joins
+      ↓
+User B joins
+      ↓
+User A creates offer
+
+but offer stay local 
+
+
+### answer step
+caller:
+user-joined
+      ↓
+createPeerConnection()
+      ↓
+createOffer()
+      ↓
+setLocalDescription()
+      ↓
+emit offer
+
+Receiver:
+receive-offer
+      ↓
+createPeerConnection()
+      ↓
+setRemoteDescription(offer)
+      ↓
+createAnswer()
+      ↓
+setLocalDescription(answer)
+      ↓
+emit answer
+
+caller:
+receive-answer
+      ↓
+setRemoteDescription(answer)
+
+
+#ICE Candidates Exchange : for recognising the other browser from network
+-- b/c peers still doesn't know how to reach each other -- here we will use networking parts
+ICE candidates decides network routes,
+
+adding icecandidate in peerConnection
+
+
+
+#Receive Remote Stream (ontrack)
+-- all connection happen ice is now known now but browser don't send any tracks to the caller 
+thats why it shown black screen till now
+
+-- now we send all tracks ----- ontracks() 
+
+-- peer.addTrack(
+    track,
+    streamRef.current
+);  -- we told browser: send my audioa and video tracks to other peer 
+
+-- now on other sid browser receive all tracks and fires : peer.ontrack()
+
+-- media arrivves -> fires --> ontrack()
+
+-- event.stream
+peer.ontrack = (event) => {}
+we receive --> event.streams
+usually: event.stream[0] -- contains -- remote mediastream
+
+
+
+
+######################
+#next phase to improving functionality of application
+-- Call request architecture
+Caller
+   ↓
+call-user
+   ↓
+Receiver
+   ↓
+incoming-call
+   ↓
+Accept
+   ↓
+Offer/Answer starts
+
