@@ -1,0 +1,39 @@
+lets service happen and running
+
+1. go to the cluster 
+2. go to the cluster where you want to make service
+3. create a new service
+   - application type - service
+   - family -- which task definition will be used in this service 
+   - service name 
+   - how many task you have to launch - [Desired task]
+   - deployment option - rolling update 
+   - optional - Load Balancing 
+   on which port 
+   - create a new load balancer 
+   - load balancer name 
+   - port : 80 [fix]
+
+   -(optional) - service auto scaling - use service auto scaling 
+   - minimum number of task 
+   - maximum number of task 
+   - PolicyName - 
+   - ECS service metric 
+   - target value
+   
+
+   # service creating take time
+   Q. what does service create internally 
+   - creating containers, load balancer, target value network policy , log group , infrastructure , machine , security ,auto scaling
+
+
+
+
+
+   ## 
+   deletion of service / clean up
+
+    -- 1. revised it to all seted value to 0
+
+    2 go for deletion
+     

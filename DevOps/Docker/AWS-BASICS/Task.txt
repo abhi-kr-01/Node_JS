@@ -1,0 +1,38 @@
+Q. what is ECS task and creating task definition
+
+--> Task definition - a set of rules on which cluster works
+
+in cluster there is lot of services which has containing link with ECR and service connected with [task definition -- which image from where to pull]
+
+[ECRR] --------------[--->[service1] , [service2] ]cluster
+                            |
+                            |
+                            |
+                           \-/
+                        [task definiton ] -- which image from where to pull 
+
+create task definition on aws
+
+1. go to task definiton 
+2. create new task definition
+3. name it
+4. infrastructure requirement -> launch type -> AWS fargate
+5. operating system 
+6. Task size -> cpu and memory 
+
+7 now we have to give the container details 
+ -container name 
+ -image-url
+ - port mapping 
+
+8. health checking -- means container is working or not ? 
+ how it check -- get('/health',res came from server which depict that server is working)
+ -- AWS 
+ healthcheck optional is available for task and container in task definiton during task definition
+ CMD: 
+ --> CMD-SHELL curl -f http://localhost:{port}/health || exit 1
+
+ set interval -- after 30 sec automatically req is send to health api to check the health or we can set the interval manually
+
+ after every 30 sec it check the container is healthy or not if not it spin up new container. because it assume that container is killed
+ 
