@@ -1,0 +1,342 @@
+1.redis.set(key,value);
+redis : key => value
+
+2. redis.get(key);
+it will return value
+e.g: const m = await redis.get(key)
+
+3. redis.exists(key)  : o/p :1-> if exists else 0;
+
+4. redis.del(key);
+
+5. redis.ttl(key);   ---> check remaining expires time;
+
+
+with mongoDB:
+Request
+   │
+   ▼
+Redis
+   │
+   ├── Found
+   │      ▼
+   │   Response
+   │
+   └── Not Found
+          ▼
+       MongoDB
+          ▼
+       Save to Redis
+          ▼
+       Response
+
+
+# exipration 
+await redis.set("key","value") -< but we don't store forever
+
+so expiration :  await redis.set("key","value","EX","time")
+
+e.g:
+app.get("/user/:id", async (req,res)=>{
+
+    const key = `user:${req.params.id}`;  
+
+    const cachedUser = await redis.get(key);    // geting user data
+
+    if(cachedUser){                            // check user is present or not 
+        return res.json(JSON.parse(cachedUser));  // if present teh nsend Response
+    }
+
+    const user = await User.findById(req.params.id);   // if not then search in mongodb
+
+    await redis.set(                                  // after gettting from db set it to redis with expiration 
+        key,
+        JSON.stringify(user),
+        "EX",
+        60
+    );
+
+    res.json(user);                                 // then res send
+}); 
+
+--------- here we use get() 
+Q: why we use get instead of exists()?
+Ans: - b/c we get message from the get() and message is required here so if we use exists then to get message we have to accessa again 
+in redis menas it require 2 network call
+
+- exists() is used where ther is only required for checking nnot geting data in response 
+
+
+------------------------------------------------------------------------ Theory -----------------------------------------------------
+
+
+4. HASH
+
+Redis Hash is similar to MongoDB document.
+
+Store:
+
+await redis.hset(
+    "user:1",
+    "name",
+    "Abhi"
+);
+
+Multiple fields:
+
+await redis.hset(
+    "user:1",
+    {
+        name: "Abhi",
+        age: 22,
+        city: "Patna"
+    }
+);
+
+Redis:
+
+user:1
+
+name -> Abhi
+age  -> 22
+city -> Patna
+
+Get one field:
+
+const name = await redis.hget(
+    "user:1",
+    "name"
+);
+
+Get entire hash:
+
+const user = await redis.hgetall(
+    "user:1"
+);
+
+Output:
+
+{
+    name:"Abhi",
+    age:"22",
+    city:"Patna"
+}
+5. LIST
+
+Like arrays.
+
+Push right:
+
+await redis.rpush(
+    "tasks",
+    "Learn Redis"
+);
+
+await redis.rpush(
+    "tasks",
+    "Learn Docker"
+);
+
+Redis:
+
+tasks
+
+[
+ Learn Redis,
+ Learn Docker
+]
+
+Get list:
+
+await redis.lrange(
+    "tasks",
+    0,
+    -1
+);
+
+Output:
+
+[
+ "Learn Redis",
+ "Learn Docker"
+]
+
+Remove first item:
+
+await redis.lpop("tasks");
+
+Used in:
+
+Queues
+Background Jobs
+Notifications
+6. SET
+
+Unique values only.
+
+Store:
+
+await redis.sadd(
+    "skills",
+    "NodeJS"
+);
+
+await redis.sadd(
+    "skills",
+    "Redis"
+);
+
+await redis.sadd(
+    "skills",
+    "Redis"
+);
+
+Redis:
+
+NodeJS
+Redis
+
+Only one Redis.
+
+Get all:
+
+await redis.smembers(
+    "skills"
+);
+
+Check member:
+
+await redis.sismember(
+    "skills",
+    "Redis"
+);
+
+Output:
+
+1
+
+Used in:
+
+Followers
+Tags
+Permissions
+Roles
+7. Sorted Set (ZSET)
+
+Stores score + value.
+
+Example:
+
+await redis.zadd(
+    "leaderboard",
+    100,
+    "Abhi"
+);
+
+await redis.zadd(
+    "leaderboard",
+    300,
+    "Rahul"
+);
+
+await redis.zadd(
+    "leaderboard",
+    200,
+    "Aman"
+);
+
+Redis:
+
+Rahul 300
+Aman  200
+Abhi  100
+
+Get ranking:
+
+await redis.zrevrange(
+    "leaderboard",
+    0,
+    2
+);
+
+Output:
+
+[
+ "Rahul",
+ "Aman",
+ "Abhi"
+]
+
+Used in:
+
+Leaderboards
+Game Scores
+Trending Posts
+Rankings
+8. Pub/Sub
+
+Redis can act like a message broker.
+
+Publisher:
+
+await redis.publish(
+    "chat",
+    "Hello"
+);
+
+Subscriber:
+
+redis.subscribe("chat");
+
+redis.on("message",
+(channel,message)=>{
+    console.log(message);
+});
+
+Used in:
+
+Chat Apps
+Notifications
+Real-time Events
+Methods You Must Master First
+
+For your Redis learning project, focus on these in order:
+
+Phase 1 (Caching)
+set()
+get()
+exists()
+del()
+ttl()
+expire()
+setex()
+Phase 2 (Objects)
+hset()
+hget()
+hgetall()
+hdel()
+Phase 3 (Queues)
+rpush()
+lpush()
+lpop()
+rpop()
+lrange()
+Phase 4 (Advanced)
+sadd()
+smembers()
+
+zadd()
+zrange()
+
+publish()
+subscribe()
+Phase 5
+Redis Streams
+Distributed Locks
+Rate Limiting
+Session Storage
+BullMQ
+
+These are the concepts used in real-world backend systems and interviews.
+
+For your current Redis setup project, I'd recommend starting with String operations + TTL + caching MongoDB data, because that's where Redis provides immediate practical value.

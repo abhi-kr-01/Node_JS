@@ -1,0 +1,53 @@
+const redis = new Redis(
+    process.env.REDIS_URL || 'http://localhost:6379'
+);
+
+This line creates a connection between your Node application and Redis.
+
+ioredis:
+
+Opens a TCP connection
+Connects to Redis server
+Keeps the connection alive
+Allows commands like
+
+after that we will use redis.get()
+redis.set()
+redis.ping()
+redis.del()
+redis.ping()
+
+#Redis Uses Its Own Protocol
+
+Redis uses a protocol called RESP (Redis Serialization Protocol).
+When you write:
+
+await redis.set("name", "Abhi");
+
+ioredis converts it into something like:
+
+*3
+$3
+SET
+$4
+name
+$4
+Abhi
+
+and sends it directly to Redis over a TCP connection.
+
+MongoDB Uses Its Own Wire Protocol
+
+Similarly, when you write:
+
+await User.find();
+
+Mongoose converts that into MongoDB's binary wire protocol.
+
+MongoDB receives:
+
+find users collection
+
+(in binary format, not HTTP)
+
+and returns the documents.

@@ -1,0 +1,50 @@
+bullmq --
+
+-Powers video transcoding, AI pipelines, payment processing, and millions of background jobs
+
+Q. why do we need bullmq ?
+
+-without bullmq
+Client
+   ↓
+Express Server
+   ↓
+Save User
+   ↓
+Send Email
+   ↓
+Generate PDF
+   ↓
+Resize Images
+   ↓
+Response to User
+
+- with bullmq
+Client
+   ↓
+Express Server
+   ↓
+Save User
+   ↓
+Add Job to Queue
+   ↓
+Return Response Immediately
+
+---------------------
+
+Worker
+   ↓
+Take Job from Queue
+   ↓
+Send Email
+Generate PDF
+Resize Image
+etc.
+
+2. ARchitecture
+
+bullmq consist mainly three parts : producer --> queue --> redis --> worker 
+- producer - add jobs
+- redis -- store jobs
+- worker -- consume and  process jobs
+- 

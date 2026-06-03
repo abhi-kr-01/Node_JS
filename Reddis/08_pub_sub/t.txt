@@ -1,0 +1,6 @@
+-pub-sub mainly use in notification services
+
+- pud-sub -> publisher - subscriber
+-- it is available in redis
+
+-

@@ -1,0 +1,6 @@
+1. npm init 
+2. install all dependencies - 
+    ioredis -> it is the good package for interact with redis.
+    mongo, express and all required packages in project.
+
+3. 
